@@ -23,19 +23,29 @@ class Horario():
         if  hora_fim3 is not None:
             self.dic['dthora_fim3'] = timedelta(hours = int(hora_fim3[0:2]), minutes = int(hora_fim3[3:]))
 
-        self.entradasValidar(self.dic)
-        total_reg, prev_saida = self.saidaCalcular(self.dic)
+    def calcular(self):
 
-        self.horarioImprimir(total_reg, prev_saida)
+        self.entradasValidar()
+        total_reg, prev_saida = self.saidaCalcular()
+        msgList = self.horarioImprimir(total_reg, prev_saida)
 
-    def horarioImprimir(self, total_reg, prev_saida ):
+        return msgList
+
+    def horarioImprimir(self, total_reg, prev_saida):
+
+        msgList = []
         print(f"Total de horas já registradas: {total_reg}")
+        msgList.append(f"Total de horas já registradas: {total_reg}")
         if total_reg < self.horas_dia:
+            msgList.append(f"Previsão de horário de saída: {prev_saida}")
             print(f"Previsão de horário de saída: {prev_saida}")
         else:
+            msgList.append(f"Carga horária cumprida")
             print('Carga horária cumprida')
 
-    def entradasValidar (self, dic):
+        return msgList
+
+    def entradasValidar (self):
 
         dic_keys = list(self.dic.keys())
 
@@ -43,7 +53,7 @@ class Horario():
             raise ValueError
         else:
             if ('dthora_fim1' in dic_keys):
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini1'], dt_fim = dic['dthora_fim1']):
+                if not self.intervaloValidar(dt_ini = self.dic['dthora_ini1'], dt_fim = self.dic['dthora_fim1']):
                     raise ValueError
 
         if ('dthora_ini2' in dic_keys):
@@ -51,7 +61,7 @@ class Horario():
                 'dthora_fim1' not in dic_keys):
                 raise ValueError
             else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_fim1'], dt_fim = dic['dthora_ini2']):
+                if not self.intervaloValidar(dt_ini = self.dic['dthora_fim1'], dt_fim = self.dic['dthora_ini2']):
                     raise ValueError
 
         if ('dthora_fim2' in dic_keys):
@@ -60,7 +70,7 @@ class Horario():
                 'dthora_ini2' not in dic_keys):
                 raise ValueError
             else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini2'], dt_fim = dic['dthora_fim2']):
+                if not self.intervaloValidar(dt_ini = self.dic['dthora_ini2'], dt_fim = self.dic['dthora_fim2']):
                     raise ValueError
 
         if ('dthora_ini3' in dic_keys):
@@ -70,7 +80,7 @@ class Horario():
                 'dthora_fim2' not in dic_keys):
                 raise ValueError
             else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_fim2'], dt_fim = dic['dthora_ini3']):
+                if not self.intervaloValidar(dt_ini = self.dic['dthora_fim2'], dt_fim = self.dic['dthora_ini3']):
                     raise ValueError
 
         if ('dthora_fim3' in dic_keys):
@@ -81,7 +91,7 @@ class Horario():
                 'dthora_ini3' not in dic_keys):
                 raise ValueError
             else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini3'], dt_fim = dic['dthora_fim3']):
+                if not self.intervaloValidar(dt_ini = self.dic['dthora_ini3'], dt_fim = self.dic['dthora_fim3']):
                     raise ValueError
 
     def intervaloValidar(self, dt_ini, dt_fim):
@@ -89,48 +99,150 @@ class Horario():
             return False
         return True
 
-    def saidaCalcular(self, dic):
+    def saidaCalcular(self):
 
         calc_saida = None
         prev_saida = None
 
-        if 'dthora_fim3' in dic:
-            duracoes = [dic['dthora_fim3'] - dic['dthora_ini3'],
-                        dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
+        if 'dthora_fim3' in self.dic:
+            duracoes = [self.dic['dthora_fim3'] - self.dic['dthora_ini3'],
+                        self.dic['dthora_fim2'] - self.dic['dthora_ini2'],
+                        self.dic['dthora_fim1'] - self.dic['dthora_ini1']]
+            calc_saida = self.dic['dthora_fim3']
 
-        elif 'dthora_ini3' in dic:
-            duracoes = [dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_ini3']
+        elif 'dthora_ini3' in self.dic:
+            duracoes = [self.dic['dthora_fim2'] - self.dic['dthora_ini2'],
+                        self.dic['dthora_fim1'] - self.dic['dthora_ini1']]
+            calc_saida = self.dic['dthora_ini3']
 
-        elif 'dthora_fim2' in dic:
-            duracoes = [dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_fim2']
+        elif 'dthora_fim2' in self.dic:
+            duracoes = [self.dic['dthora_fim2'] - self.dic['dthora_ini2'],
+                        self.dic['dthora_fim1'] - self.dic['dthora_ini1']]
+            calc_saida = self.dic['dthora_fim2']
 
-        elif 'dthora_ini2' in dic:
-            duracoes = [dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_ini2']
+        elif 'dthora_ini2' in self.dic:
+            duracoes = [self.dic['dthora_fim1'] - self.dic['dthora_ini1']]
+            calc_saida = self.dic['dthora_ini2']
 
-        elif 'dthora_fim1' in dic:
-            duracoes = [dic['dthora_fim1'] - dic['dthora_ini1']]
+        elif 'dthora_fim1' in self.dic:
+            duracoes = [self.dic['dthora_fim1'] - self.dic['dthora_ini1']]
 
-            calc_saida = dic['dthora_fim1'] + timedelta(hours = 1)
+            calc_saida = self.dic['dthora_fim1'] + timedelta(hours = 1)
 
-        elif 'dthora_ini1' in dic:
+        elif 'dthora_ini1' in self.dic:
             duracoes = [timedelta(hours = 0)]
-            calc_saida = dic['dthora_ini1'] + timedelta(hours = 1)
+            calc_saida = self.dic['dthora_ini1'] + timedelta(hours = 1)
 
         total_reg = sum(duracoes, timedelta())
 
         saldo_horas_dia = self.horas_dia - total_reg
 
-
         if calc_saida is not None:
             prev_saida = saldo_horas_dia + calc_saida
 
         return total_reg, prev_saida
+
+def test_3_intervalos_comp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00",
+                hora_fim2="14:00",
+                hora_ini3="15:00",
+                hora_fim3="18:30")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 7:30:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 19:30:00')
+
+def test_3_intervalos_incomp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00",
+                hora_fim2="14:00",
+                hora_ini3="15:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 4:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 19:30:00')
+
+def test_2_intervalos_comp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00",
+                hora_fim2="14:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 4:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 18:30:00')
+
+def test_2_intervalos_incomp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 3:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 18:30:00')
+
+def test_2_intervalos_incomp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 3:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 18:30:00')
+
+def test_1_intervalo_comp():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00")
+
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 3:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 18:30:00')
+
+def test_1_intervalo_incomp():
+
+    h = Horario(hora_ini1="09:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 0:00:00')
+
+    assert (msgList[1] == 'Previsão de horário de saída: 18:30:00')
+
+def test_carga_completa():
+
+    h = Horario(hora_ini1="09:00",
+                hora_fim1="12:00",
+                hora_ini2="13:00",
+                hora_fim2="19:00")
+
+    msgList = h.calcular()
+
+    assert (msgList[0] == 'Total de horas já registradas: 9:00:00')
+
+    assert (msgList[1] == 'Carga horária cumprida')
+
 
 if __name__ == "__main__":
     print("")

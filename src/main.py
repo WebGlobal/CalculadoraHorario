@@ -1,5 +1,6 @@
 import argparse
 import re
+import sys
 from calculo_horario import Horario
 
 def hora(strhora):
@@ -76,12 +77,14 @@ def main():
 
     args = parser.parse_args()
 
-    Horario(hora_ini1=args.hora_ini1,
-            hora_fim1=args.hora_fim1,
-            hora_ini2=args.hora_ini2,
-            hora_fim2=args.hora_fim2,
-            hora_ini3=args.hora_ini3,
-            hora_fim3=args.hora_fim3)
+    h = Horario(hora_ini1=args.hora_ini1,
+                hora_fim1=args.hora_fim1,
+                hora_ini2=args.hora_ini2,
+                hora_fim2=args.hora_fim2,
+                hora_ini3=args.hora_ini3,
+                hora_fim3=args.hora_fim3)
+
+    h.calcular()
 
 if __name__ == "__main__":
     main()
