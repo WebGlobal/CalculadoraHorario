@@ -1,4 +1,4 @@
-from datetime import timedelta, time
+from datetime import timedelta
 
 class Horario():
     def __init__(self, list_args):
@@ -13,7 +13,6 @@ class Horario():
 
     def calcular(self):
 
-        # self.entradasValidar()
         total_reg, prev_saida, horas_excedidas = self.saidaCalcular()
         msgList = self.horarioImprimir(total_reg, prev_saida, horas_excedidas)
 
