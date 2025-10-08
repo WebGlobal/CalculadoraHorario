@@ -1,136 +1,156 @@
-from datetime import timedelta, time
+from datetime import timedelta
+
 
 class Horario():
-    def __init__(self,
-                 hora_ini1, hora_fim1 = None,
-                 hora_ini2= None ,hora_fim2= None,
-                 hora_ini3= None, hora_fim3= None):
+    """
+    Classe que realiza o cálculo do horário de saída,
+    horas trabalhadas/horas excedidas para os dados fornecidos.
 
-        self.horas_dia = timedelta(hours = 8, minutes = 30)
+    ### Methods:
+        - calcular: realiza o cálculo do horário de saída,
+          horas trabalhadas/horas excedidas
+        - horarioImprimir: imprime o resultado obtido na função saidaCalcular
+        - saidaCalcular: realiza o cálculo dos horarios
 
-        self.dic = {}
+    """
 
-        if  hora_ini1 is not None:
-            self.dic['dthora_ini1'] = timedelta(hours = int(hora_ini1[0:2]), minutes = int(hora_ini1[3:]))
-        if  hora_fim1 is not None:
-            self.dic['dthora_fim1'] = timedelta(hours = int(hora_fim1[0:2]), minutes = int(hora_fim1[3:]))
-        if  hora_ini2 is not None:
-            self.dic['dthora_ini2'] = timedelta(hours = int(hora_ini2[0:2]), minutes = int(hora_ini2[3:]))
-        if  hora_fim2 is not None:
-            self.dic['dthora_fim2'] = timedelta(hours = int(hora_fim2[0:2]), minutes = int(hora_fim2[3:]))
-        if  hora_ini3 is not None:
-            self.dic['dthora_ini3'] = timedelta(hours = int(hora_ini3[0:2]), minutes = int(hora_ini3[3:]))
-        if  hora_fim3 is not None:
-            self.dic['dthora_fim3'] = timedelta(hours = int(hora_fim3[0:2]), minutes = int(hora_fim3[3:]))
+    def __init__(self, list_args: list):
+        """
+        Inicializa a lista de horários da classe
 
-        self.entradasValidar(self.dic)
-        total_reg, prev_saida = self.saidaCalcular(self.dic)
+        ### Parameters:
+            - list_args (list): lista de horários passada como argumento na
+              chamada do programa
+        """
 
-        self.horarioImprimir(total_reg, prev_saida)
+        self.horas_dia = timedelta(hours=8, minutes=30)
+        self.timedeltaList = []
 
-    def horarioImprimir(self, total_reg, prev_saida ):
+        for arg in list_args:
+            self.timedeltaList.append(timedelta(hours=int(arg[0:2]),
+                                                minutes=int(arg[3:])))
+
+        self.timedeltaList = sorted(self.timedeltaList)
+
+    def calcular(self) -> list:
+        """
+        Realiza a chamada das funções saidaCalcular e horarioImprimir para
+        o cálculo e impressão horário de saída,
+        horas trabalhadas/horas excedidas
+
+        ### Returns:
+            list: lista com todas as mensagens geradas
+        """
+
+        total_reg, prev_saida, horas_excedidas, horas_faltantes = \
+            self.saidaCalcular(self.timedeltaList)
+
+        msgList = self.horarioImprimir(
+            total_reg=total_reg,
+            prev_saida=prev_saida,
+            horas_excedidas=horas_excedidas,
+            horas_faltantes=horas_faltantes
+        )
+
+        return msgList
+
+    def horarioImprimir(self,
+                        total_reg: object,
+                        prev_saida: object,
+                        horas_excedidas: object,
+                        horas_faltantes: object):
+        """
+        Realiza a escrita na tela os valores obtidos na função saidaCalcular
+
+        ### Parameters:
+            - total_reg (datetime): total de horas já registrada
+            - prev_saida (datetime): previsão de saída para o dia, considerando
+              8,5 horas trabalhadas
+            - horas_excedidas (datetime): total de horas que excedem as
+              8,5 horas diárias, caso a carga horária tenha sido ultrapassada
+            - horas_faltantes (datetime): total de horas que faltam para
+              completar as 8,5 horas diárias, caso a carga horária não tenha
+              sido ultrapassada
+        """
+
+        msgList = []
         print(f"Total de horas já registradas: {total_reg}")
+        msgList.append(f"Total de horas já registradas: {total_reg}")
         if total_reg < self.horas_dia:
+            msgList.append(f"Previsão de horário de saída: {prev_saida}")
             print(f"Previsão de horário de saída: {prev_saida}")
         else:
+            msgList.append("Carga horária cumprida")
             print('Carga horária cumprida')
 
-    def entradasValidar (self, dic):
+        if horas_excedidas:
+            msgList.append(f"Total de horas excedidas: {horas_excedidas}")
+            print(f"Total de horas excedidas: {horas_excedidas}")
 
-        dic_keys = list(self.dic.keys())
+        if horas_faltantes:
+            msgList.append(f"Total de horas faltantes: {horas_faltantes}")
+            print(f"Total de horas faltantes: {horas_faltantes}")
 
-        if ('dthora_ini1' not in dic_keys):
-            raise ValueError
-        else:
-            if ('dthora_fim1' in dic_keys):
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini1'], dt_fim = dic['dthora_fim1']):
-                    raise ValueError
+        return msgList
 
-        if ('dthora_ini2' in dic_keys):
-            if ('dthora_ini1' not in dic_keys or
-                'dthora_fim1' not in dic_keys):
-                raise ValueError
-            else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_fim1'], dt_fim = dic['dthora_ini2']):
-                    raise ValueError
+    def saidaCalcular(self, timedeltaList: list):
+        """
+        Realiza a chamada das funções saidaCalcular e horarioImprimir para
+        o cálculo e impressão horário de saída,
+        horas trabalhadas/horas excedidas
 
-        if ('dthora_fim2' in dic_keys):
-            if ('dthora_ini1' not in dic_keys or
-                'dthora_fim1' not in dic_keys or
-                'dthora_ini2' not in dic_keys):
-                raise ValueError
-            else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini2'], dt_fim = dic['dthora_fim2']):
-                    raise ValueError
+        ### Parameters:
+            - timedeltaList (list): lista de horários passada como argumento
+              na chamada do programa no formato timedelta
 
-        if ('dthora_ini3' in dic_keys):
-            if ('dthora_ini1' not in dic_keys or
-                'dthora_fim1' not in dic_keys or
-                'dthora_ini2' not in dic_keys or
-                'dthora_fim2' not in dic_keys):
-                raise ValueError
-            else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_fim2'], dt_fim = dic['dthora_ini3']):
-                    raise ValueError
+        ### Returns:
+            list: lista com os valores cálculados para
+            total_reg (total de horas já registrada),
+            prev_saida (previsão de saída para o dia),
+            horas_excedidas (total de horas que excedem as 8,5 horas diárias),
+            horas_faltantes (total de horas que faltam para completar as 8,5
+            horas diárias)
+        """
 
-        if ('dthora_fim3' in dic_keys):
-            if ('dthora_ini1' not in dic_keys or
-                'dthora_fim1' not in dic_keys or
-                'dthora_ini2' not in dic_keys or
-                'dthora_fim2' not in dic_keys or
-                'dthora_ini3' not in dic_keys):
-                raise ValueError
-            else:
-                if not self.intervaloValidar(dt_ini = dic['dthora_ini3'], dt_fim = dic['dthora_fim3']):
-                    raise ValueError
-
-    def intervaloValidar(self, dt_ini, dt_fim):
-        if dt_ini > dt_fim:
-            return False
-        return True
-
-    def saidaCalcular(self, dic):
-
-        calc_saida = None
         prev_saida = None
+        horas_excedidas = None
+        horas_faltantes = None
 
-        if 'dthora_fim3' in dic:
-            duracoes = [dic['dthora_fim3'] - dic['dthora_ini3'],
-                        dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
+        duracoes = []
 
-        elif 'dthora_ini3' in dic:
-            duracoes = [dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_ini3']
+        if len(timedeltaList) % 2 == 0:
+            tamLista = len(timedeltaList)
+        else:
+            tamLista = len(timedeltaList) - 1
 
-        elif 'dthora_fim2' in dic:
-            duracoes = [dic['dthora_fim2'] - dic['dthora_ini2'],
-                        dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_fim2']
+        hora_almoco = False
+        intervalo = 0
+        for i in range(0, tamLista, 2):
+            duracoes.append(timedeltaList[i+1] - timedeltaList[i])
+            if intervalo != 0:
+                if self.timedeltaList[i] - intervalo >= timedelta(hours=1):
+                    hora_almoco = True
+            intervalo = self.timedeltaList[i+1]
 
-        elif 'dthora_ini2' in dic:
-            duracoes = [dic['dthora_fim1'] - dic['dthora_ini1']]
-            calc_saida = dic['dthora_ini2']
+        if len(timedeltaList) > 1 and len(timedeltaList) % 2 != 0:
 
-        elif 'dthora_fim1' in dic:
-            duracoes = [dic['dthora_fim1'] - dic['dthora_ini1']]
-
-            calc_saida = dic['dthora_fim1'] + timedelta(hours = 1)
-
-        elif 'dthora_ini1' in dic:
-            duracoes = [timedelta(hours = 0)]
-            calc_saida = dic['dthora_ini1'] + timedelta(hours = 1)
+            if (timedeltaList[-1] - timedeltaList[-2] >= timedelta(hours=1)):
+                hora_almoco = True
 
         total_reg = sum(duracoes, timedelta())
 
-        saldo_horas_dia = self.horas_dia - total_reg
+        prev_saida = self.horas_dia - total_reg + timedeltaList[-1]
 
+        if not hora_almoco:
+            prev_saida += + timedelta(hours=1)
 
-        if calc_saida is not None:
-            prev_saida = saldo_horas_dia + calc_saida
+        if total_reg >= self.horas_dia:
+            horas_excedidas = total_reg - self.horas_dia
+        else:
+            horas_faltantes = self.horas_dia - total_reg
 
-        return total_reg, prev_saida
+        return total_reg, prev_saida, horas_excedidas, horas_faltantes
+
 
 if __name__ == "__main__":
     print("")
