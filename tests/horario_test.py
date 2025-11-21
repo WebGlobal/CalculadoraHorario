@@ -12,6 +12,7 @@
 
 import os
 import sys
+from datetime import datetime
 
 
 def append_to_path() -> str:
@@ -53,7 +54,13 @@ class TestHorarios():
 
     def test_3_intervalos_comp(self):
 
-        h = Horario(["09:00", "12:00", "13:00", "14:00", "15:00", "18:30"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M'),
+            datetime.strptime("14:00", '%H:%M'),
+            datetime.strptime("15:00", '%H:%M'),
+            datetime.strptime("18:30", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -66,6 +73,12 @@ class TestHorarios():
     def test_3_intervalos_incomp(self):
 
         h = Horario(["09:00", "12:00", "13:00", "14:00", "15:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M'),
+            datetime.strptime("14:00", '%H:%M'),
+            datetime.strptime("15:00", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -77,7 +90,11 @@ class TestHorarios():
 
     def test_2_intervalos_comp(self):
 
-        h = Horario(["09:00", "12:00", "13:00", "14:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M'),
+            datetime.strptime("14:00", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -89,7 +106,10 @@ class TestHorarios():
 
     def test_2_intervalos_incomp(self):
 
-        h = Horario(["09:00", "12:00", "13:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -101,7 +121,9 @@ class TestHorarios():
 
     def test_1_intervalo_comp(self):
 
-        h = Horario(["09:00", "12:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -113,7 +135,8 @@ class TestHorarios():
 
     def test_1_intervalo_incomp(self):
 
-        h = Horario(["09:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -125,7 +148,11 @@ class TestHorarios():
 
     def test_carga_completa(self):
 
-        h = Horario(["09:00", "12:00", "13:00", "18:30"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M'),
+            datetime.strptime("18:30", '%H:%M')])
 
         msgList = h.calcular()
 
@@ -135,7 +162,11 @@ class TestHorarios():
 
     def test_carga_excedida(self):
 
-        h = Horario(["09:00", "12:00", "13:00", "19:00"])
+        h = Horario([
+            datetime.strptime("09:00", '%H:%M'),
+            datetime.strptime("12:00", '%H:%M'),
+            datetime.strptime("13:00", '%H:%M'),
+            datetime.strptime("19:00", '%H:%M')])
 
         msgList = h.calcular()
 
