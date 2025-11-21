@@ -11,7 +11,6 @@
 ###############################################################################
 
 import argparse
-import re
 import sys
 from calculo_horario import Horario
 from datetime import datetime
