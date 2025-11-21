@@ -36,11 +36,7 @@ class Horario():
         """
 
         self.horas_dia = timedelta(hours=8, minutes=30)
-        self.timedeltaList = []
-
-        for arg in list_args:
-            self.timedeltaList.append(timedelta(hours=int(arg[0:2]),
-                                                minutes=int(arg[3:])))
+        self.timedeltaList = list_args
 
         self.timedeltaList = sorted(self.timedeltaList)
 
@@ -89,8 +85,10 @@ class Horario():
         print(f"Total de horas já registradas: {total_reg}")
         msgList.append(f"Total de horas já registradas: {total_reg}")
         if total_reg < self.horas_dia:
-            msgList.append(f"Previsão de horário de saída: {prev_saida}")
-            print(f"Previsão de horário de saída: {prev_saida}")
+
+            msgList.append(f'Previsão de horário de saída: {prev_saida.strftime("%H:%M:%S")}')
+            print(f'Previsão de horário de saída: {prev_saida.strftime("%H:%M:%S")}')
+
         else:
             msgList.append("Carga horária cumprida")
             print('Carga horária cumprida')
